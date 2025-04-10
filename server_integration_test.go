@@ -4,22 +4,20 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	server "github.com/jaychillin2607/go-http-server/server"
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	store := InMemoryPlayerStore{}
-	myServer := server.PlayerServer{Store: &store}
+	myServer := PlayerServer{Store: &store}
 	player := "Pepper"
 
-	myServer.ServeHTTP(httptest.NewRecorder(), server.NewPostWinRequest(player))
-	myServer.ServeHTTP(httptest.NewRecorder(), server.NewPostWinRequest(player))
-	myServer.ServeHTTP(httptest.NewRecorder(), server.NewPostWinRequest(player))
+	myServer.ServeHTTP(httptest.NewRecorder(), NewPostWinRequest(player))
+	myServer.ServeHTTP(httptest.NewRecorder(), NewPostWinRequest(player))
+	myServer.ServeHTTP(httptest.NewRecorder(), NewPostWinRequest(player))
 
 	response := httptest.NewRecorder()
-	myServer.ServeHTTP(response, server.NewGetScoreRequest(player))
-	server.AssertStatus(t, response.Code, http.StatusOK)
+	myServer.ServeHTTP(response, NewGetScoreRequest(player))
+	AssertStatus(t, response.Code, http.StatusOK)
 
-	server.AssertResponseBody(t, response.Body.String(), "3")
+	AssertResponseBody(t, response.Body.String(), "3")
 }
