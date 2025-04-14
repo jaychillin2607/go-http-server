@@ -11,7 +11,7 @@ import (
 const dbFileName = "game.db.json"
 
 func main() {
-	store, close, err := poker.FileSystemPlayerStoreFromFile(dbFileName)
+	fileSystemPlayerStore, close, err := poker.FileSystemPlayerStoreFromFile(dbFileName)
 
 	if err != nil {
 		log.Fatal(err)
@@ -19,6 +19,8 @@ func main() {
 	defer close()
 
 	fmt.Println("Let's play poker")
-	fmt.Println("Type {Name} wins to record a win")
-	poker.NewCLI(store, os.Stdin).PlayPoker()
+	fmt.Println(`Type "{Name} wins" to record a win`)
+
+	game := poker.NewGame(poker.BlindAlerterFunc(poker.StdOutAlerter), fileSystemPlayerStore)
+	poker.NewCLI(os.Stdin, os.Stdout, game).PlayPoker()
 }
